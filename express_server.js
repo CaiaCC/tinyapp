@@ -19,9 +19,10 @@ const urlDatabase = {
 	"b2xVn2": "http://www.lighthouselabs.ca",
 	"9sm5xK": "http://www.google.com"
 };
-// let urlDatabaseKeys = Object.keys(urlDatabase)
-app.get("/", (req, res) => {
-	res.send("How you doing?");
+
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
 });
 
 app.get("/urls", (req, res) => {
@@ -30,20 +31,57 @@ app.get("/urls", (req, res) => {
 	res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+app.get("/urls/:shortURL", (req, res) => {
+	const shortURL = req.params.shortURL;
+	const longURL = urlDatabase[shortURL] ;
+	
+	let templateVars = {shortURL, longURL};
+	
+  res.render("urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+	let longURL = urlDatabase[req.params.shortURL];
+	if (!longURL.includes("http://" )) {
+		res.redirect("http://" + longURL);
+	}
+	res.redirect(longURL);
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+	const shortURL = req.params.shortURL;
+
+	delete urlDatabase[shortURL];
+
+  res.redirect("/urls")
 });
 
 app.post("/urls", (req, res) => {
-	console.log(req.body);
 	let longURL = req.body.longURL;
 	const shortURL = generateRandomString();
 	
+	if (!longURL.includes("http://" )) {
+		longURL = "http://" + longURL;
+	}
+	let urlDatabaseKeys = Object.keys(urlDatabase);
+	for (let key of urlDatabaseKeys) {
+		if (urlDatabase[key] === longURL) {
+			return res.redirect("/urls/" + key);
+		} 
+	}
 	urlDatabase[shortURL] = longURL;
-	// let templateVars = {shortURL, longURL};
-	res.redirect(200, "/urls/" + shortURL);
-	// res.render("urls_show", templateVars);
+	return res.redirect("/urls/" + shortURL);
 });
+
+app.get("/", (req, res) => {
+	res.send("How you doing?");
+});
+
+app.listen(PORT, () => {
+	console.log(`Example app listening to on port ${PORT}`);
+});
+
+
 
 //check if the request url is in the database
 /*
@@ -58,26 +96,7 @@ for (let key of urlDatabaseKeys) {
 }
 */
 
-app.get("/urls/:shortURL", (req, res) => {
-	const shortURL = req.params.shortURL
-	const longURL = urlDatabase[shortURL] 
-  let templateVars = {shortURL, longURL};
-  res.render("urls_show", templateVars);
-});
-
-app.get("/u/:shortURL", (req, res) => {
-	const longURL = urlDatabase[req.params.shortURL];
-	
-	if (!longURL.includes("http://" )) {
-		res.redirect("http://" + longURL);
-	}
-	res.redirect(longURL);
-	res.end();
-});
-
 /*
-
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -96,7 +115,4 @@ app.get("/set", (req, res) => {
  });
 */
 
-app.listen(PORT, () => {
-	console.log(`Example app listening to on port ${PORT}`);
-});
 

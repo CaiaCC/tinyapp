@@ -12,29 +12,72 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+const users = {
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
 let templateVars = {};
 
-app.get("/register", (req, res) => {
-  res.render('register');
+app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = generateRandomString();
+  
+  if (password.length === 0 || email.length === 0) {
+    res.redirect("register");;
+  }
+  for (let user in users) {
+    if (users[user].email === email) {
+      res.redirect("register");
+    }
+  }
+  users[id] = {id, email, password};
+  res
+    .cookie("user_id", id)
+    .redirect("urls")
+    console.log(res.cookie())
 });
 
-app.post("/login", (req, res) => {
-  const username = req.body.username;
+app.get("/register", (req, res) => {
+  const id = req.cookies["user_id"];
   templateVars = {
-    username, 
+    urls: urlDatabase,
+    user: users[id]
+  };
+
+  res.render("register", templateVars);
+});
+
+
+app.post("/login", (req, res) => {
+  const id = req.cookies["user_id"];
+  templateVars = {
+    user: users[id],
     urls: urlDatabase
   };
 
   res
-    .cookie('username', username)
+    .cookie('user_id', useer)
     .render("urls_index", templateVars);
   console.log(`User: "${username}" just signed in.`)
 });
 
 app.get("/login", (req, res) => {
+  const id = req.cookies["user_id"];
   templateVars = {
     username: req.cookies["username"],
-    urls: urlDatabase
+    urls: urlDatabase,
+    user: users[id]
   };
 
   res.render("urls_index", templateVars);
@@ -42,24 +85,28 @@ app.get("/login", (req, res) => {
 
 app.post("/u/logout", (req, res) => {
   res
-    .clearCookie("username")
+    .clearCookie("user_id")
     .redirect("/urls");
     console.log("user signed out")
 });
 
 app.get("/urls/new", (req, res) => {
+  const id = req.cookies["user_id"];
   templateVars = {
     username: req.cookies["username"],
-    urls: urlDatabase
+    urls: urlDatabase,
+    user: users[id]
   };
   
   res.render("urls_new", templateVars);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 });
 
 app.get("/urls", (req, res) => {
+  const id = req.cookies["user_id"];
   templateVars = {
     username: req.cookies["username"],
-    urls: urlDatabase
+    urls: urlDatabase,
+    user: users[id]
   };
   
   res.render("urls_index", templateVars);
@@ -92,11 +139,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL] ;
+  const longURL = urlDatabase[shortURL];
+  const id = req.cookies["user_id"];
   templateVars = {
     shortURL,
     longURL,
-    username: req.cookies["username"]
+    username: req.cookies["username"],
+    user: users[id]
   };
  
   res.render("urls_show", templateVars);
@@ -130,7 +179,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening to on port ${PORT}`);
+  console.log(`Caia's tiny app is listening to on port ${PORT}`);
 });
 
 

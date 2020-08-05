@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
+const cookieParser = require('cookie-parser');
 const PORT = 8080;
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extend: true}));
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 function generateRandomString() {
@@ -18,10 +20,19 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+let templateVars = {};
+
+
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  
+  res.render("urls_new", templateVars);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 });
+
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
@@ -47,9 +58,20 @@ app.post("/urls/:id", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL] ;
-  let templateVars = {shortURL, longURL};
-  
+  templateVars = {
+    shortURL,
+    longURL,
+    username: req.cookies["username"]
+  };
+ 
   res.render("urls_show", templateVars);
+});
+
+app.post("/u/logout", (req, res) => {
+  res
+    .clearCookie("username")
+    .redirect("/urls");
+    console.log("user signed out")
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -62,10 +84,36 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase};
+  templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
   
   res.render("urls_index", templateVars);
 });
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  templateVars = {
+    username, 
+    urls: urlDatabase
+  };
+
+  res
+    .cookie('username', username)
+    .render("urls_index", templateVars);
+  console.log(`User: "${username}" just signed in.`)
+});
+
+app.get("/login", (req, res) => {
+  templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+
+  res.render("urls_index", templateVars);
+});
+
 
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;

@@ -160,9 +160,9 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const userId = req.cookies["user_id"];
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
-  const userId = req.cookies["user_id"];
   
   templateVars = {
     shortURL,

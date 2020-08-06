@@ -1,4 +1,4 @@
-const {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch} = require('./data-helpers')
+const {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch} = require('./data-helpers');
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -21,7 +21,7 @@ app.post("/register", (req, res) => {
     console.log("Use register with existed email or invalid info");
     res.send(res.statusCode = 400);
   } else {
-    console.log(users)
+    console.log(users);
     users[newId] = {newId, email, password};
     res
       .cookie("user_id", newId)
@@ -74,7 +74,7 @@ app.post("/u/logout", (req, res) => {
   res
     .clearCookie("user_id")
     .redirect("/urls");
-    console.log("user signed out")
+  console.log("user signed out");
 });
 
 app.get("/urls/new", (req, res) => {
@@ -84,7 +84,7 @@ app.get("/urls/new", (req, res) => {
     user: users[userId]
   };
   
-  res.render("urls_new", templateVars);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
@@ -104,7 +104,7 @@ app.post("/urls", (req, res) => {
   if (longURL.length === 0) {
     res.send(res.statusCode = 400);
   }
-  if (!longURL.includes("http://" )) {
+  if (!longURL.includes("http://")) {
     longURL = "http://" + longURL;
   }
   let urlDatabaseKeys = Object.keys(urlDatabase);
@@ -112,7 +112,7 @@ app.post("/urls", (req, res) => {
   for (let key of urlDatabaseKeys) {
     if (urlDatabase[key] === longURL) {
       return res.redirect("/urls/" + key);
-    } 
+    }
   }
   urlDatabase[shortURL] = longURL;
   return res.redirect("/urls/" + shortURL);
@@ -122,7 +122,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
 
   delete urlDatabase[shortURL];
-  res.redirect("/urls")
+  res.redirect("/urls");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -139,13 +139,13 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  const shortURL= req.params.id;
+  const shortURL = req.params.id;
   let longURL = req.body.longURL;
   
   if (longURL.length === 0) {
     return res.redirect("/urls");
   }
-  if (!longURL.includes("http://" )) {
+  if (!longURL.includes("http://")) {
     longURL = "http://" + longURL;
   }
   urlDatabase[shortURL] = longURL;
@@ -155,7 +155,7 @@ app.post("/urls/:id", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
 
-  if (!longURL.includes("http://" )) {
+  if (!longURL.includes("http://")) {
     longURL = "http://" + longURL;
   }
   res.redirect(longURL);

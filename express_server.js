@@ -8,8 +8,6 @@ app.use(bodyParser.urlencoded({extend: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-
-
 let templateVars = {};
 
 app.post("/register", (req, res) => {
@@ -39,7 +37,6 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -59,8 +56,6 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  // const email = req.body.email;
-  // const userId = emailLookup(email);
   const userId = req.cookies["user_id"];
   templateVars = {
     urls: urlDatabase,
@@ -83,8 +78,11 @@ app.get("/urls/new", (req, res) => {
     urls: urlDatabase,
     user: users[userId]
   };
+  if(userId !== undefined) {
+    res.render("urls_new", templateVars);
+  }
+    res.redirect("/register")
   
-  res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
@@ -101,21 +99,27 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  if (longURL.length === 0) {
+  const userId = req.cookies["user_id"];
+
+  if (userId !== undefined) {
+    if (longURL.length === 0) {
     res.send(res.statusCode = 400);
-  }
-  if (!longURL.includes("http://")) {
-    longURL = "http://" + longURL;
-  }
-  let urlDatabaseKeys = Object.keys(urlDatabase);
-  
-  for (let key of urlDatabaseKeys) {
-    if (urlDatabase[key] === longURL) {
-      return res.redirect("/urls/" + key);
     }
+    if (!longURL.includes("http://")) {
+      longURL = "http://" + longURL;
+    }
+    let urlDatabaseKeys = Object.keys(urlDatabase);
+    
+    for (let key of urlDatabaseKeys) {
+      if (urlDatabase[key] === longURL) {
+        return res.redirect("/urls/" + key);
+      }
+    }
+    urlDatabase[shortURL] = longURL;
+    res.redirect("/urls/" + shortURL);
+  } else {
+    res.redirect("/register");
   }
-  urlDatabase[shortURL] = longURL;
-  return res.redirect("/urls/" + shortURL);
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {

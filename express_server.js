@@ -1,4 +1,4 @@
-const {generateRandomString, users, urlDatabase, emailLookup, isPasswordMatch} = require('./data-helpers')
+const {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch} = require('./data-helpers')
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -44,19 +44,18 @@ app.get("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const registeredId = getUserIdByEmail(email);
 
-  if (emailLookup(email)) {
-    console.log("id by email",emailLookup(email))
+  if (registeredId) {
     if (isPasswordMatch(password)) {
-      console.log("passwordmatch",isPasswordMatch(password))
       res
-        .cookie('user_id', emailLookup(email))
+        .cookie('user_id', registeredId)
         .redirect("urls");
     } else {
-      res.send(res.statusCode = 400);
+      res.send(res.statusCode = 403);
     }
   } else {
-    res.redirect("/register");
+    res.send(res.statusCode = 403);
   }
 });
 
@@ -82,7 +81,6 @@ app.post("/u/logout", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   templateVars = {
-    username: req.cookies["username"],
     urls: urlDatabase,
     user: users[userId]
   };
@@ -94,7 +92,6 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
 
   templateVars = {
-    // username: req.cookies["username"],
     urls: urlDatabase,
     user: users[userId]
   };
@@ -136,7 +133,6 @@ app.get("/urls/:shortURL", (req, res) => {
   templateVars = {
     shortURL,
     longURL,
-    username: req.cookies["username"],
     user: users[userId]
   };
  

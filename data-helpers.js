@@ -25,22 +25,22 @@ function generateRandomString() {
   return randomURL;
 };
 
-function emailLookup(email) {
+function getUserIdByEmail(email) {
 	for (let user in users) {
     if (users[user].email === email) {
-      return false;
+      return users[user].id;
     }
 	}
-	return users[user].id;
+	return null;
 };
 
 function isPasswordMatch(password) {
 	for (let user in users) {
     if (users[user].password === password) {
-      return false;
+      return true;
     }
 	}
-	return true;
+	return false;
 };
 
-module.exports = {generateRandomString, users, urlDatabase, emailLookup, isPasswordMatch}
+module.exports = {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch}

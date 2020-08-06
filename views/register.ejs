@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>URL - TinyApp Example</title>
-</head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>New URL - TinyApp Example</title>
+  </head>
+
 
 
 
 <body>
-	<main style="margin: 3em;">
-  <div class="container">
-		<div class="row align-items-center">
-			<div class="col align-self-center">
-				<form action="/register" method="POST">
-					<div class="form-group" margin: 3em>
-						<label for="email1">Email address</label>
-						<input type="email" class="form-control" name="email"  placeholder="Enter email"style="width: 400px" margin: 1em>
-					</div>
-					<div class="form-group">
-						<label for="password">Password</label>
-						<input type="password" class="form-control" name="password" placeholder="Enter password" style="width: 400px" margin: 1em>
-					</div>
-					<button type="submit" class="btn btn-primary">Register</button>
-				</form>
+	<header>
+		<%- include('partials/_header') %>
+ </header>
+	<main style="margin: 1em;">
+		<h3>Register</h3> 
+		<form action="/register" method="POST">
+			<div class="form-group mb-2" >
+				<label for="email1">Email address</label>
+				<input type="email" class="form-control" name="email"  placeholder="Enter email"style="width: 400px" margin: 1em>
 			</div>
-		</div>	
-	</div>	
+			<div class="form-group mb-2">
+				<label for="password">Password</label>
+				<input type="password" class="form-control" name="password" placeholder="Enter password" style="width: 400px" margin: 1em>
+			</div>
+			<button type="submit" class="btn btn-primary">Register</button>
+		</form>
   </main>
 	
 

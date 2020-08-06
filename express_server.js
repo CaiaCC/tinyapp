@@ -17,17 +17,16 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const newId = generateRandomString();
   
-  if (password.length === 0 || email.length === 0 || !isPasswordMatch(email)) {
-    console.log("Register with existed emil or invalid")
+  if (password.length === 0 || email.length === 0 || getUserIdByEmail(email)) {
+    console.log("Use register with existed email or invalid info");
     res.send(res.statusCode = 400);
   } else {
+    console.log(users)
     users[newId] = {newId, email, password};
     res
       .cookie("user_id", newId)
       .redirect("urls");
   }
-  console.log(users);
-  console.log(res.cookie())
 });
 
 app.get("/register", (req, res) => {

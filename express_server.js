@@ -1,4 +1,4 @@
-const {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch} = require('./data-helpers');
+const {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch, urlsForUser} = require('./data-helpers');
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -89,7 +89,7 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
 
   templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(userId),
     user: users[userId]
   };
   
@@ -161,8 +161,6 @@ app.get("/urls/:shortURL", (req, res) => {
 
   res.render("urls_show", templateVars);
 });
-
-
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;

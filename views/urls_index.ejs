@@ -16,7 +16,9 @@
   </header>
   <%if (user === undefined) { %>
     <h4>Please log in or register first...</h4>
-    <% }else { %>
+  <% }else if (urls.lengh === 0){ %>
+    <h4>No matching URLs...</h4>
+  <% }else {%>
   <main style="margin: 1em;">
     <h3>My URLs</h3> 
     

@@ -50,7 +50,16 @@ const isPasswordMatch = function(password) {
 };
 
 const urlsForUser = function(id) {
-  
+  let userURLObj = {};
+
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLObj = {
+        shortURL : urlDatabase[shortURL]
+      }
+    }
+  }
+  return userURLObj;
 }
 
-module.exports = {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch};
+module.exports = {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch, urlsForUser};

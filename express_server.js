@@ -103,7 +103,7 @@ app.post("/urls", (req, res) => {
 
   if (userId !== undefined) {
     if (longURL.length === 0) {
-    res.send(res.statusCode = 400);
+      res.send(res.statusCode = 400);
     }
     if (!longURL.includes("http://")) {
       longURL = "http://" + longURL;
@@ -115,7 +115,7 @@ app.post("/urls", (req, res) => {
         return res.redirect("/urls/" + key);
       }
     }
-    urlDatabase[shortURL] = longURL;
+    urlDatabase[shortURL].longURL = longURL;
     res.redirect("/urls/" + shortURL);
   } else {
     res.redirect("/register");
@@ -124,44 +124,54 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
+  const userId = req.cookies["user_id"];
 
-  delete urlDatabase[shortURL];
+  if (userId !== undefined) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  }
+  res.redirect("/register");
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  let longURL = req.body.longURL;
+  console.log("longURL",longURL );
+ 
+  if (longURL === undefined) {
+    res.send(res.statusCode = 403);
+  } 
+  if (!longURL.includes("http://")) {
+    longURL = "http://" + longURL;
+  } 
+  urlDatabase[shortURL].longURL = longURL;
   res.redirect("/urls");
+
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL].longURL;
   const userId = req.cookies["user_id"];
   templateVars = {
     shortURL,
     longURL,
     user: users[userId]
   };
- 
+
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls/:id", (req, res) => {
-  const shortURL = req.params.id;
-  let longURL = req.body.longURL;
-  
-  if (longURL.length === 0) {
-    return res.redirect("/urls");
-  }
-  if (!longURL.includes("http://")) {
-    longURL = "http://" + longURL;
-  }
-  urlDatabase[shortURL] = longURL;
-  res.redirect("/urls");
-});
+
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  const shortURL = req.params.shortURL;
+  let longURL = urlDatabase[shortURL].longURL;
 
   if (!longURL.includes("http://")) {
     longURL = "http://" + longURL;
   }
+
   res.redirect(longURL);
 });
 

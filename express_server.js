@@ -1,4 +1,4 @@
-const {generateRandomString, users, urlDatabase, getUserIdByEmail, urlsForUser} = require('./data-helpers');
+const {generateRandomString, users, urlDatabase, getUserIdByEmail, urlsForUser} = require('./helpers');
 const express = require('express');
 // const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
@@ -146,7 +146,7 @@ app.post("/register", (req, res) => {
   if (password.length === 0) {
     res.status(400).send("Invalid password...");
   } 
-  if (getUserIdByEmail(email)) {
+  if (getUserIdByEmail(email, users)) {
     res.status(400).send("This email is already registerd...");
   } else {
     users[id] = {id, email, password: hashedPassword};
@@ -160,7 +160,7 @@ app.post("/login", (req, res) => {
   // const {email, password} = req.body;
   const email = req.body.email;
   const password = req.body.password;
-  const id = getUserIdByEmail(email);
+  const id = getUserIdByEmail(email, users);
   console.log(id)
   if (id) {
     const isPasswordMatch = bcrypt.compareSync(password, users[id].password);

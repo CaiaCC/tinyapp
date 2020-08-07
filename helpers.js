@@ -2,11 +2,12 @@ const {urlDatabase, users} = require('./data');
 
 const generateRandomString = function() {
   const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let randomURL = "";
+  let randomString = "";
+
   for (let i = 0; i < 6; i++) {
     randomURL += alphanumeric[Math.floor(Math.random() * alphanumeric.length)];
   }
-  return randomURL;
+  return randomString;
 };
 
 const getUserIdByEmail = function(email, database) {
@@ -17,25 +18,16 @@ const getUserIdByEmail = function(email, database) {
   }
   return null;
 };
-/*
-const isPasswordMatch = function(password) {
-  for (let id in users) {
-    let isMatch = bcrypt.compareSync(password, users[id].password);
-    if (isMatch) return true;
-    console.log(isMatch)
-  }
-  return false;
-};*/
 
 const urlsForUser = function(id) {
-  let userUrlObj = {};
+  let userUrls = {};
 
   for (let shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
-      userUrlObj[shortURL] = urlDatabase[shortURL];
+      userUrls[shortURL] = urlDatabase[shortURL];
     }
   }
-  return userUrlObj;
+  return userUrls;
 };
 
 module.exports = {generateRandomString, getUserIdByEmail, urlsForUser};

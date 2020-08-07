@@ -1,6 +1,7 @@
 const {generateRandomString, users, urlDatabase, getUserIdByEmail, urlsForUser} = require('./data-helpers');
 const express = require('express');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 
@@ -9,12 +10,17 @@ const PORT = 8080;
 let templateVars = {};
 
 app.use(bodyParser.urlencoded({extend: true}));
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cookieSession({
+  name: 'youCanNotSeeMeLol',
+  keys: ['doNoTell']
+}));
 app.set("view engine", "ejs");
 
 
 app.get("/urls/new", (req, res) => {
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id =req.session.user_id;
   const user = users[id];
   templateVars = {
     urls: urlDatabase,
@@ -28,7 +34,8 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId =req.session.user_id
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
   
@@ -52,7 +59,8 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId =req.session.user_id;
   templateVars = {
     urls: urlDatabase,
     user: users[userId]
@@ -62,7 +70,8 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id =req.session.user_id;
   templateVars = {
     urls: urlDatabase,
     user: users[id]
@@ -72,7 +81,8 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId =req.session.user_id;
   templateVars = {
     urls: urlsForUser(userId),
     user: users[userId]
@@ -89,20 +99,21 @@ app.get("/", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId =req.session.user_id;
   const shortURLOwnerId = urlDatabase[shortURL].userID;
   
   if (userId === shortURLOwnerId) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   }
-
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId =req.session.user_id;
   const shortURLOwnerId = urlDatabase[shortURL].userID;
  
   if (userId === shortURLOwnerId) {
@@ -119,9 +130,8 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/u/logout", (req, res) => {
-  res
-    .clearCookie("user_id")
-    .redirect("/urls");
+  req.session = null
+  res.redirect("/urls");
   console.log("user signed out");
 });
 
@@ -140,10 +150,9 @@ app.post("/register", (req, res) => {
     res.status(400).send("This email is already registerd...");
   } else {
     users[id] = {id, email, password: hashedPassword};
-    res
-      .cookie("user_id", id)
-      .redirect("urls");
-      console.log(users);
+    req.session.user_id = id;
+    res.redirect("urls");
+    console.log(users);
     }
 });
 
@@ -157,9 +166,8 @@ app.post("/login", (req, res) => {
     const isPasswordMatch = bcrypt.compareSync(password, users[id].password);
     
     if (isPasswordMatch) {
-      return res
-              .cookie('user_id', id)
-              .redirect("urls");
+      req.session.user_id = id
+      return res.redirect("urls");
     } else {
       return res.status(403).send("Password invalid...");
     }
@@ -171,7 +179,9 @@ app.post("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id =req.session.user_id;
+  
   const user = users[id];
 
   if (!user) return res.redirect("/register");

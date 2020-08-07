@@ -4,9 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["hhttps://github.com/CaiaCC/tinyapp/blob/master/doc/urls-page.png"](#)
-!["https://github.com/CaiaCC/tinyapp/blob/master/doc/urls:new-page.png"](#)
-!["https://github.com/CaiaCC/tinyapp/blob/master/doc/urls:shortURL-page.png"](#)
+!["Screenshot of URLs page"](https://github.com/CaiaCC/tinyapp/blob/master/doc/urls-page.png)
+!["Screenshot of urls:new page"](https://github.com/CaiaCC/tinyapp/blob/master/doc/urls:new-page.png)
+!["Screenshot of urls:shortURL page"](https://github.com/CaiaCC/tinyapp/blob/master/doc/urls:shortURL-page.png)
 
 ## Dependencies
 

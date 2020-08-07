@@ -170,7 +170,6 @@ app.post("/login", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
-  console.log(longURL);
   const shortURL = generateRandomString();
   const id = req.cookies["user_id"];
   const user = users[id];
@@ -181,7 +180,6 @@ app.post("/urls", (req, res) => {
   if (!longURL.includes("http://")) {
     longURL = "http://" + longURL;
   }
-  console.log(longURL);
   let urlDatabaseShortURLs = Object.keys(urlDatabase);
   
   for (let shortURL of urlDatabaseShortURLs) {
@@ -189,7 +187,6 @@ app.post("/urls", (req, res) => {
       return res.redirect("/urls/" + shortURL);
     }
   }
-  console.log(longURL);
   urlDatabase[shortURL] = {longURL,  userID: id};
   return res.redirect("/urls/" + shortURL);
   

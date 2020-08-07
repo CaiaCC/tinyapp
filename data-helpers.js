@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const urlDatabase = {
   "b2xVn2": { 
     longURL: "http://www.lighthouselabs.ca", 
@@ -19,7 +21,13 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
-  }
+  },
+  QPihuH: {
+    id: 'QPihuH',
+    email: 'caiachuang@gmail.com',
+    password:
+     '$2b$10$5.gm6MNwR3O06dbBBe8Xa.HvEv0DHo6tlBh8422FqeeQp7vt58eNG' 
+  } 
 };
 
 const generateRandomString = function() {
@@ -32,32 +40,32 @@ const generateRandomString = function() {
 };
 
 const getUserIdByEmail = function(email) {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return users[user].id;
+  for (let id in users) {
+    if (users[id].email === email) {
+      return users[id].id;
     }
   }
   return null;
 };
 
 const isPasswordMatch = function(password) {
-  for (let user in users) {
-    if (users[user].password === password) {
-      return true;
-    }
+  for (let id in users) {
+    let isMatch = bcrypt.compareSync(password, users[id].password);
+    if (isMatch) return true;
+    console.log(isMatch)
   }
   return false;
 };
 
 const urlsForUser = function(id) {
-  let userURLObj = {};
+  let userUrlObj = {};
 
   for (let shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
-      userURLObj[shortURL] = urlDatabase[shortURL];
+      userUrlObj[shortURL] = urlDatabase[shortURL];
     }
   }
-  return userURLObj;
+  return userUrlObj;
 }
 
-module.exports = {generateRandomString, users, urlDatabase, getUserIdByEmail, isPasswordMatch, urlsForUser};
+module.exports = {generateRandomString, users, urlDatabase, getUserIdByEmail, urlsForUser};

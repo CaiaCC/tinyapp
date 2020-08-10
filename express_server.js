@@ -1,5 +1,4 @@
 const {generateRandomString, getUserIdByEmail, urlsForUser} = require('./helpers');
-const {urlDatabase, users} = require('./data');
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
@@ -37,13 +36,14 @@ app.get("/urls/:shortURL", (req, res) => {
   const id = req.session.user_id;
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
-  templateVars = {
-    shortURL,
-    longURL,
-    user: users[id]
-  };
-
-  res.render("urls_show", templateVars);
+  const user = users[id];
+  templateVars = {shortURL,longURL, user};
+  
+  if (!user) {
+    res.redirect("/login");
+  } else {
+    res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -133,10 +133,10 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
   
-  if (email.length === 0) {
+  if (!email) {
     res.status(400).send("Invalid email...");
   }
-  if (password.length === 0) {
+  if (!password) {
     res.status(400).send("Invalid password...");
   }
   if (getUserIdByEmail(email, users)) {

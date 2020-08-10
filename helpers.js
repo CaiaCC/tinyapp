@@ -1,5 +1,3 @@
-const {urlDatabase, users} = require('./data');
-
 const generateRandomString = function() {
   const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let randomURL = "";

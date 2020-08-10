@@ -61,7 +61,7 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
   } else {
     res.render("urls_new", templateVars);
-  } 
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {

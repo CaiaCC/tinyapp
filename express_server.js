@@ -4,6 +4,7 @@ const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
+const methodOverride = require('method-override');
 
 const app = express();
 const PORT = 8080;
@@ -15,6 +16,7 @@ app.use(cookieSession({
   keys: ['doNoTell']
 }));
 app.set("view engine", "ejs");
+app.use(methodOverride('_method'));
 
 //GET
 app.get("/register", (req, res) => {
@@ -67,7 +69,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
   const user = users[id];
-  templateVars = {shortURL,longURL, user};
+  templateVars = {shortURL, longURL, user};
   
   if (!user) {
     res.redirect("/login");
@@ -165,8 +167,10 @@ app.post("/urls", (req, res) => {
   return res.redirect("/urls");
 });
 
+
+// mothod override: DELETE
 // user can only delete their own URLs
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const id = req.session.user_id;
   const shortURLOwnerId = urlDatabase[shortURL].userID;
@@ -177,8 +181,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-// user modify URL page
-app.post("/urls/:shortURL", (req, res) => {
+// mothod override: PUT
+// user edit long URL
+app.put("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
   const id = req.session.user_id;

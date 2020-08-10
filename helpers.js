@@ -1,17 +1,19 @@
+const {urlDatabase, users} = require('./data');
+
 const generateRandomString = function() {
   const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let randomURL = "";
+  let randomString = "";
 
   for (let i = 0; i < 6; i++) {
-    randomURL += alphanumeric[Math.floor(Math.random() * alphanumeric.length)];
+    randomString += alphanumeric[Math.floor(Math.random() * alphanumeric.length)];
   }
-  return randomURL;
+  return randomString;
 };
 
 const getUserIdByEmail = function(email, database) {
   for (let id in database) {
     if (users[id].email === email) {
-      return users[id].id;
+      return users[id].userID;
     }
   }
   return null;

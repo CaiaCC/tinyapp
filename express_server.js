@@ -1,4 +1,5 @@
 const {generateRandomString, getUserIdByEmail, urlsForUser} = require('./helpers');
+const {urlDatabase, users} = require('./data');
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bodyParser = require("body-parser");

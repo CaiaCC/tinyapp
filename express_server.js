@@ -25,10 +25,12 @@ app.get("/urls/new", (req, res) => {
     user
   };
 
-  if (user) {
+  if (!user) {
+    res.redirect("/login");
+  } else {
     res.render("urls_new", templateVars);
   }
-  res.redirect("/login");
+  
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -185,7 +187,7 @@ app.post("/urls", (req, res) => {
     }
   }
   urlDatabase[shortURL] = {longURL,  userID: id};
-  return res.redirect("/urls/" + shortURL);
+  return res.redirect("/urls");
   
 });
 

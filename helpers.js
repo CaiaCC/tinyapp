@@ -1,5 +1,6 @@
 const {urlDatabase, users} = require('./data');
 
+// generate a string which has 6 ramdon alphanumeric characters
 const generateRandomString = function() {
   const alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let randomString = "";
@@ -10,15 +11,17 @@ const generateRandomString = function() {
   return randomString;
 };
 
+// check if email is registered; if so, return user id
 const getUserIdByEmail = function(email, database) {
   for (let id in database) {
     if (users[id].email === email) {
-      return users[id].userID;
+      return users[id].id;
     }
   }
   return null;
 };
 
+// generate user's unique URL database since each user can only edit their own URLs
 const urlsForUser = function(id) {
   const userUrls = {};
 

@@ -13,29 +13,33 @@ const urlDatabase = {
     "9xm5xK": "http://www.google.com",
 };
 
-
-app.get("/", (req, res) => {
-    res.send("Welcome to TinyApp!");
-});
-
 app.get('/urls', (req, res) => {
     const templateVars = { urls: urlDatabase };
     res.render('urls_index', templateVars)
 });
 
 app.post('/urls', (req, res) => {
-    const { lonqURL } = req.body.longURL;
+    const { longURL } = req.body;
     const shortURL = shortURLGenerator();
-    console.log(req);
-    res.send('Ok')
+    
+    urlDatabase[shortURL] = longURL;
+
+    res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/urls/new',(req, res) => {
     res.render('urls_new');
 });
 
+app.get('/u/:shortURL', (req, res) => {
+    const { shortURL } = req.params;
+    const longURL = urlDatabase[shortURL];
+
+    res.redirect(longURL);
+});
+
 app.get('/urls/:shortURL', (req, res) => {
-    const shortURL = req.params.shortURL;
+    const { shortURL } = req.params;
     const longURL = urlDatabase[shortURL];
     const templateVars = { shortURL, longURL };
     

@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { shortURLGenerator } = require('./helpers');
 
 const app = express();
 const PORT = 8080;
@@ -12,13 +13,21 @@ const urlDatabase = {
     "9xm5xK": "http://www.google.com",
 };
 
+
 app.get("/", (req, res) => {
-    res.send("Hello!");
+    res.send("Welcome to TinyApp!");
 });
 
 app.get('/urls', (req, res) => {
     const templateVars = { urls: urlDatabase };
     res.render('urls_index', templateVars)
+});
+
+app.post('/urls', (req, res) => {
+    const { lonqURL } = req.body.longURL;
+    const shortURL = shortURLGenerator();
+    console.log(req);
+    res.send('Ok')
 });
 
 app.get('/urls/new',(req, res) => {
@@ -32,11 +41,6 @@ app.get('/urls/:shortURL', (req, res) => {
     
     res.render("urls_show", templateVars);
 });
-
-// app.get('/urls/:longURL', (req, res) => {
-//      const templateVars = { urls: urlDatabase };
-//      res.render("urls_show", templateVars);
-// });
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
